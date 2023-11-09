@@ -1,43 +1,80 @@
-let gridContainer = document.getElementById("gridContainer");
-let clearButton = document.getElementById("clear-btn");
-let resizeButton = document.getElementById("resize-btn");
+const grid = document.getElementById('gridContainer');
+const clear = document.getElementById('clear-btn');
+let gridSize = document.getElementById('gridSize');
+let gridContainer = document.getElementById('gridContainer');
 
-function createGrid(rows, cols) {
-    gridContainer.innerHTML = '';
-    gridContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-    gridContainer.style.gridTemplateRows = `repeat(${rows}, 1fr`;
+let cols ;
+let rows ;
 
-    for (let i = 0; i < rows * cols; i++) {
-        let square = document.createElement("div");
-        square.className = "square";
-        gridContainer.appendChild(square);
+let isDrawing = false;
 
-        square.addEventListener('mouseover', () => {
-            square.style.backgroundColor = '#000000';
-        });
+function createGrid() {
+
+  while (grid.firstChild) {
+    grid.removeChild(grid.firstChild);
+  }
+
+
+  let choice = parseInt(gridSize.value);
+
+  if (choice == 32) {
+    rows = 32;
+    cols = 32;
+    gridContainer.classList.remove('square16');
+    gridContainer.classList.remove('square64');
+    gridContainer.classList.add('square32');
+    
+  } else if (choice == 64) {
+    rows = 64;
+    cols = 64;
+    gridContainer.classList.remove('square16');
+    gridContainer.classList.remove('square32');
+    gridContainer.classList.add('square64');
+    
+  }else if(choice == 16){
+    rows = 16;
+    cols = 16;
+    gridContainer.classList.remove('square64');
+    gridContainer.classList.remove('square32');
+    gridContainer.classList.add('square16');
+    
+  }
+
+  
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      let square = document.createElement('div');
+      square.classList.add('square');
+      grid.appendChild(square);
+
+      square.addEventListener('mousedown', () => {
+        isDrawing = true; 
+        square.style.backgroundColor = '#000000';
+      });
+
+      square.addEventListener('mousemove', () => {
+        if(isDrawing){
+        square.style.backgroundColor = '#000000';
     }
-}
+      });
 
-function clearGrid() {
-    let squares = document.querySelectorAll('.square');
-    squares.forEach((square) => {
-        square.style.backgroundColor = '';
-    });
-}
+      square.addEventListener('mouseup', () => {
+        isDrawing = false; 
+      });
 
-function resizeGrid() {
-    let size = prompt("Enter the number of squares per side (1-100):");
-    size = parseInt(size);
-
-    if (size >= 1 && size <= 100) {
-        createGrid(size, size);
-    } else {
-        alert("Please enter a valid number between 1 and 100.");
+        clear.addEventListener('click', () => {
+        square.style.backgroundColor = 'white';
+      });
+      
     }
+  }
 }
 
-createGrid(16, 16);
 
+
+
+createGrid();
+gridSize.addEventListener('change', createGrid);
 
 
 
